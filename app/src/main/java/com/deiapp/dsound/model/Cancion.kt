@@ -14,5 +14,7 @@ data class Cancion(
 
     val duracion: Long,
 
-    val uri: Uri
+    val uri: Uri,
+
+    val portadaUri: Uri? = null
 )

@@ -30,7 +30,19 @@
         android:layout_width="54dp"
         android:layout_height="54dp"
 
-        android:background="@drawable/bg_song_art" />
+        android:background="@drawable/bg_song_art"
+        android:clipToOutline="true">
+
+
+        <ImageView
+            android:id="@+id/imgPortadaCancion"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:contentDescription="@null"
+            android:scaleType="centerCrop" />
+
+    </FrameLayout>
 
 
     <!-- Información -->

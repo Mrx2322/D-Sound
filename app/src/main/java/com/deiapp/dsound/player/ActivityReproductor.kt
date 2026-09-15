@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.TextView
@@ -28,6 +29,8 @@ class ActivityReproductor : AppCompatActivity() {
     private lateinit var btnAnteriorReproductor: ImageButton
     private lateinit var btnPlayReproductor: ImageButton
     private lateinit var btnSiguienteReproductor: ImageButton
+    private lateinit var btnAleatorioReproductor: TextView
+    private lateinit var btnRepetirReproductor: TextView
 
     private lateinit var tvTituloReproductor: TextView
     private lateinit var tvArtistaReproductor: TextView
@@ -90,6 +93,26 @@ class ActivityReproductor : AppCompatActivity() {
 
                 actualizarProgreso()
             }
+
+
+            override fun onShuffleModeEnabledChanged(
+                shuffleModeEnabled: Boolean
+            ) {
+
+                actualizarBotonAleatorio(
+                    shuffleModeEnabled
+                )
+            }
+
+
+            override fun onRepeatModeChanged(
+                repeatMode: Int
+            ) {
+
+                actualizarBotonRepetir(
+                    repeatMode
+                )
+            }
         }
 
 
@@ -119,8 +142,25 @@ class ActivityReproductor : AppCompatActivity() {
 
     private fun configurarInsets() {
 
+        val root =
+            findViewById<View>(
+                R.id.mainReproductor
+            )
+
+        val paddingInicialIzquierdo =
+            root.paddingLeft
+
+        val paddingInicialSuperior =
+            root.paddingTop
+
+        val paddingInicialDerecho =
+            root.paddingRight
+
+        val paddingInicialInferior =
+            root.paddingBottom
+
         ViewCompat.setOnApplyWindowInsetsListener(
-            findViewById(R.id.mainReproductor)
+            root
         ) { view, insets ->
 
             val systemBars =
@@ -129,10 +169,17 @@ class ActivityReproductor : AppCompatActivity() {
                 )
 
             view.setPadding(
-                systemBars.left + view.paddingLeft,
-                systemBars.top,
-                systemBars.right + view.paddingRight,
-                systemBars.bottom
+                paddingInicialIzquierdo +
+                        systemBars.left,
+
+                paddingInicialSuperior +
+                        systemBars.top,
+
+                paddingInicialDerecho +
+                        systemBars.right,
+
+                paddingInicialInferior +
+                        systemBars.bottom
             )
 
             insets
@@ -160,6 +207,16 @@ class ActivityReproductor : AppCompatActivity() {
         btnSiguienteReproductor =
             findViewById(
                 R.id.btnSiguienteReproductor
+            )
+
+        btnAleatorioReproductor =
+            findViewById(
+                R.id.btnAleatorioReproductor
+            )
+
+        btnRepetirReproductor =
+            findViewById(
+                R.id.btnRepetirReproductor
             )
 
 
@@ -195,6 +252,38 @@ class ActivityReproductor : AppCompatActivity() {
 
         btnCerrarReproductor.setOnClickListener {
             finish()
+        }
+
+
+        btnAleatorioReproductor.setOnClickListener {
+
+            val controller =
+                mediaController
+                    ?: return@setOnClickListener
+
+            controller.shuffleModeEnabled =
+                !controller.shuffleModeEnabled
+        }
+
+
+        btnRepetirReproductor.setOnClickListener {
+
+            val controller =
+                mediaController
+                    ?: return@setOnClickListener
+
+            controller.repeatMode =
+                when (controller.repeatMode) {
+
+                    Player.REPEAT_MODE_OFF ->
+                        Player.REPEAT_MODE_ALL
+
+                    Player.REPEAT_MODE_ALL ->
+                        Player.REPEAT_MODE_ONE
+
+                    else ->
+                        Player.REPEAT_MODE_OFF
+                }
         }
 
 
@@ -365,6 +454,16 @@ class ActivityReproductor : AppCompatActivity() {
                     )
 
 
+                    actualizarBotonAleatorio(
+                        controller.shuffleModeEnabled
+                    )
+
+
+                    actualizarBotonRepetir(
+                        controller.repeatMode
+                    )
+
+
                     actualizarProgreso()
 
 
@@ -428,6 +527,63 @@ class ActivityReproductor : AppCompatActivity() {
             btnPlayReproductor.contentDescription =
                 getString(R.string.play)
         }
+    }
+
+
+    private fun actualizarBotonAleatorio(
+        activado: Boolean
+    ) {
+
+        btnAleatorioReproductor.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (activado) {
+                    R.color.ds_magenta
+                } else {
+                    R.color.ds_text_secondary
+                }
+            )
+        )
+
+        btnAleatorioReproductor.alpha =
+            if (activado) 1f else 0.75f
+    }
+
+
+    private fun actualizarBotonRepetir(
+        modoRepeticion: Int
+    ) {
+
+        val activado =
+            modoRepeticion !=
+                    Player.REPEAT_MODE_OFF
+
+        btnRepetirReproductor.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (activado) {
+                    R.color.ds_magenta
+                } else {
+                    R.color.ds_text_secondary
+                }
+            )
+        )
+
+        btnRepetirReproductor.alpha =
+            if (activado) 1f else 0.75f
+
+        btnRepetirReproductor.text =
+            when (modoRepeticion) {
+
+                Player.REPEAT_MODE_ALL ->
+                    getString(R.string.repeat)
+
+                Player.REPEAT_MODE_ONE ->
+                    "${getString(R.string.repeat)} 1"
+
+                else ->
+                    getString(R.string.repeat)
+            }
     }
 
 

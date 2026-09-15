@@ -4,10 +4,12 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
 import com.deiapp.dsound.R
 import com.deiapp.dsound.model.Cancion
 
@@ -65,6 +67,11 @@ class CancionAdapter(
                 R.id.tvDuracionCancion
             )
 
+        private val imgPortadaCancion: ImageView =
+            itemView.findViewById(
+                R.id.imgPortadaCancion
+            )
+
 
         fun render(
             cancion: Cancion,
@@ -81,6 +88,10 @@ class CancionAdapter(
                 DateUtils.formatElapsedTime(
                     cancion.duracion / 1000
                 )
+
+            imgPortadaCancion.load(
+                cancion.portadaUri
+            )
 
             itemView.setOnClickListener {
                 onCancionClick(cancion)

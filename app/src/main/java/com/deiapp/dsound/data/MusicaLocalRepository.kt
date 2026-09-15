@@ -2,13 +2,24 @@ package com.deiapp.dsound.data
 
 import android.content.ContentUris
 import android.content.Context
+import android.net.Uri
 import android.provider.MediaStore
 import com.deiapp.dsound.R
 import com.deiapp.dsound.model.Cancion
+import android.content.ContentResolver
 
 class MusicaLocalRepository(
     private val context: Context
 ) {
+
+    private val uriPortadasAlbum: Uri =
+        Uri.Builder()
+            .scheme(ContentResolver.SCHEME_CONTENT)
+            .authority(MediaStore.AUTHORITY)
+            .appendPath("external")
+            .appendPath("audio")
+            .appendPath("albumart")
+            .build()
 
     fun obtenerCanciones(): List<Cancion> {
 
@@ -28,6 +39,7 @@ class MusicaLocalRepository(
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.ALBUM_ID,
                 MediaStore.Audio.Media.DURATION
             )
 
@@ -69,6 +81,11 @@ class MusicaLocalRepository(
                     MediaStore.Audio.Media.ALBUM
                 )
 
+            val indiceAlbumId =
+                cursor.getColumnIndexOrThrow(
+                    MediaStore.Audio.Media.ALBUM_ID
+                )
+
             val indiceDuracion =
                 cursor.getColumnIndexOrThrow(
                     MediaStore.Audio.Media.DURATION
@@ -98,6 +115,9 @@ class MusicaLocalRepository(
                         R.string.unknown_album
                     )
 
+                val albumId =
+                    cursor.getLong(indiceAlbumId)
+
                 val duracion =
                     cursor.getLong(indiceDuracion)
 
@@ -108,6 +128,16 @@ class MusicaLocalRepository(
                         id
                     )
 
+                val uriPortada =
+                    if (albumId > 0L) {
+                        ContentUris.withAppendedId(
+                            uriPortadasAlbum,
+                            albumId
+                        )
+                    } else {
+                        null
+                    }
+
 
                 canciones.add(
                     Cancion(
@@ -116,7 +146,8 @@ class MusicaLocalRepository(
                         artista = artista,
                         album = album,
                         duracion = duracion,
-                        uri = uriCancion
+                        uri = uriCancion,
+                        portadaUri = uriPortada
                     )
                 )
             }
