@@ -13,12 +13,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.deiapp.dsound.adapter.CancionAdapter
 import com.deiapp.dsound.data.MusicaLocalRepository
+import com.deiapp.dsound.model.Cancion
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tvCantidadCanciones: TextView
     private lateinit var layoutSinMusica: View
+    private lateinit var rvCanciones: RecyclerView
+
+    private lateinit var tvCancionMini: TextView
+    private lateinit var tvArtistaMini: TextView
+
+    private lateinit var cancionAdapter: CancionAdapter
+
 
     private val permisoAudioLauncher =
         registerForActivityResult(
@@ -43,6 +54,7 @@ class MainActivity : AppCompatActivity() {
 
         configurarInsets()
         inicializarComponentes()
+        configurarListaCanciones()
         comprobarPermisoAudio()
     }
 
@@ -77,6 +89,36 @@ class MainActivity : AppCompatActivity() {
 
         layoutSinMusica =
             findViewById(R.id.layoutSinMusica)
+
+        rvCanciones =
+            findViewById(R.id.rvCanciones)
+
+        tvCancionMini =
+            findViewById(R.id.tvCancionMini)
+
+        tvArtistaMini =
+            findViewById(R.id.tvArtistaMini)
+    }
+
+
+    private fun configurarListaCanciones() {
+
+        cancionAdapter =
+            CancionAdapter { cancion ->
+
+                seleccionarCancion(
+                    cancion
+                )
+            }
+
+        rvCanciones.layoutManager =
+            LinearLayoutManager(this)
+
+        rvCanciones.adapter =
+            cancionAdapter
+
+        rvCanciones.itemAnimator =
+            null
     }
 
 
@@ -134,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     mostrarResultadoCanciones(
-                        canciones.size
+                        canciones
                     )
                 }
 
@@ -155,8 +197,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun mostrarResultadoCanciones(
-        cantidad: Int
+        canciones: List<Cancion>
     ) {
+
+        val cantidad =
+            canciones.size
 
         if (cantidad > 0) {
 
@@ -170,6 +215,14 @@ class MainActivity : AppCompatActivity() {
             layoutSinMusica.visibility =
                 View.GONE
 
+            rvCanciones.visibility =
+                View.VISIBLE
+
+            // En Inicio mostramos solamente las primeras 10.
+            cancionAdapter.submitList(
+                canciones.take(10)
+            )
+
         } else {
 
             tvCantidadCanciones.text =
@@ -179,7 +232,28 @@ class MainActivity : AppCompatActivity() {
 
             layoutSinMusica.visibility =
                 View.VISIBLE
+
+            rvCanciones.visibility =
+                View.GONE
+
+            cancionAdapter.submitList(
+                emptyList()
+            )
         }
+    }
+
+
+    private fun seleccionarCancion(
+        cancion: Cancion
+    ) {
+
+        tvCancionMini.text =
+            cancion.titulo
+
+        tvArtistaMini.text =
+            cancion.artista
+
+        // La reproducción se conectará después con Media3.
     }
 
 
@@ -192,6 +266,9 @@ class MainActivity : AppCompatActivity() {
 
         layoutSinMusica.visibility =
             View.VISIBLE
+
+        rvCanciones.visibility =
+            View.GONE
 
         Toast.makeText(
             this,
@@ -210,6 +287,9 @@ class MainActivity : AppCompatActivity() {
 
         layoutSinMusica.visibility =
             View.VISIBLE
+
+        rvCanciones.visibility =
+            View.GONE
 
         Toast.makeText(
             this,

@@ -220,6 +220,26 @@
 
             </LinearLayout>
 
+            <!-- Lista de canciones -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCanciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="7dp"
+
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
+
+                android:overScrollMode="never"
+
+                android:paddingBottom="10dp"
+
+                android:visibility="gone"
+
+                tools:listitem="@layout/item_cancion" />
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
