@@ -157,4 +157,34 @@
     Canción siguiente
     </string>
 
+    <!-- Pantalla del reproductor -->
+
+    <string name="now_playing">
+    Reproduciendo ahora
+    </string>
+
+    <string name="close_player">
+    Cerrar reproductor
+    </string>
+
+    <string name="shuffle">
+    Reproducción aleatoria
+    </string>
+
+    <string name="repeat">
+    Repetir canción
+    </string>
+
+    <string name="current_position">
+    Posición actual de la canción
+    </string>
+
+    <string name="song_progress">
+    Progreso de reproducción
+    </string>
+
+    <string name="initial_time">
+    0:00
+    </string>
+
 </resources>

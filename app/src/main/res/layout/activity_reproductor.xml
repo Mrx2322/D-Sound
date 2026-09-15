@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/mainReproductor"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/bg_aurora"
+
+    android:paddingStart="22dp"
+    android:paddingEnd="22dp"
+
+    tools:context=".player.ActivityReproductor">
+
+
+    <!-- Cerrar reproductor -->
+
+    <ImageButton
+        android:id="@+id/btnCerrarReproductor"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+
+        android:layout_marginTop="12dp"
+
+        android:background="@drawable/bg_glass_panel"
+
+        android:contentDescription="@string/close_player"
+
+        android:padding="13dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:srcCompat="@android:drawable/arrow_down_float"
+        app:tint="@color/ds_text_primary" />
+
+
+    <!-- Título superior -->
+
+    <TextView
+        android:id="@+id/tvReproduciendoAhora"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/now_playing"
+        android:textColor="@color/ds_text_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+
+        app:layout_constraintBottom_toBottomOf="@id/btnCerrarReproductor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/btnCerrarReproductor" />
+
+
+    <!-- Portada grande -->
+
+    <FrameLayout
+        android:id="@+id/contenedorPortadaGrande"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:layout_marginTop="32dp"
+
+        android:background="@drawable/bg_song_art"
+
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCerrarReproductor">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+
+            android:text="@string/app_name"
+            android:textColor="@color/ds_text_primary"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+
+    <!-- Nombre de la canción -->
+
+    <TextView
+        android:id="@+id/tvTituloReproductor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="28dp"
+
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+
+        android:text="@string/nothing_playing"
+        android:textColor="@color/ds_text_primary"
+        android:textSize="23sp"
+        android:textStyle="bold"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contenedorPortadaGrande" />
+
+
+    <!-- Artista -->
+
+    <TextView
+        android:id="@+id/tvArtistaReproductor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="6dp"
+
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+
+        android:text="@string/select_song"
+        android:textColor="@color/ds_text_secondary"
+        android:textSize="15sp"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloReproductor" />
+
+
+    <!-- Progreso -->
+
+    <SeekBar
+        android:id="@+id/seekBarReproductor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="24dp"
+
+        android:contentDescription="@string/song_progress"
+
+        android:max="1000"
+        android:progress="0"
+
+        android:progressTint="@color/ds_magenta"
+        android:progressBackgroundTint="#40FFFFFF"
+        android:thumbTint="@color/ds_text_primary"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvArtistaReproductor" />
+
+
+    <!-- Tiempo actual -->
+
+    <TextView
+        android:id="@+id/tvTiempoActual"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/initial_time"
+        android:textColor="@color/ds_text_secondary"
+        android:textSize="12sp"
+
+        app:layout_constraintStart_toStartOf="@id/seekBarReproductor"
+        app:layout_constraintTop_toBottomOf="@id/seekBarReproductor" />
+
+
+    <!-- Duración -->
+
+    <TextView
+        android:id="@+id/tvDuracionTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/initial_time"
+        android:textColor="@color/ds_text_secondary"
+        android:textSize="12sp"
+
+        app:layout_constraintEnd_toEndOf="@id/seekBarReproductor"
+        app:layout_constraintTop_toBottomOf="@id/seekBarReproductor" />
+
+
+    <!-- Controles principales -->
+
+    <LinearLayout
+        android:id="@+id/layoutControlesReproductor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="22dp"
+
+        android:gravity="center"
+        android:orientation="horizontal"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTiempoActual">
+
+
+        <ImageButton
+            android:id="@+id/btnAnteriorReproductor"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+
+            android:background="@android:color/transparent"
+
+            android:contentDescription="@string/previous_song"
+
+            android:padding="14dp"
+
+            app:srcCompat="@android:drawable/ic_media_previous"
+            app:tint="@color/ds_text_primary" />
+
+
+        <ImageButton
+            android:id="@+id/btnPlayReproductor"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+
+            android:background="@drawable/bg_glass_panel"
+
+            android:contentDescription="@string/play"
+
+            android:padding="18dp"
+
+            app:srcCompat="@android:drawable/ic_media_play"
+            app:tint="@color/ds_text_primary" />
+
+
+        <ImageButton
+            android:id="@+id/btnSiguienteReproductor"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+
+            android:background="@android:color/transparent"
+
+            android:contentDescription="@string/next_song"
+
+            android:padding="14dp"
+
+            app:srcCompat="@android:drawable/ic_media_next"
+            app:tint="@color/ds_text_primary" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

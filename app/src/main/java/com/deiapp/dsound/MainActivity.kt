@@ -2,6 +2,7 @@ package com.deiapp.dsound
 
 import android.Manifest
 import android.content.ComponentName
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -26,9 +27,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.dsound.adapter.CancionAdapter
 import com.deiapp.dsound.data.MusicaLocalRepository
 import com.deiapp.dsound.model.Cancion
+import com.deiapp.dsound.player.ActivityReproductor
 import com.deiapp.dsound.player.ReproductorService
 import com.google.common.util.concurrent.ListenableFuture
-import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +39,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var tvCancionMini: TextView
     private lateinit var tvArtistaMini: TextView
+    private lateinit var miniPlayerContainer: View
     private lateinit var btnPlayMini: ImageButton
+
+    private lateinit var btnAnteriorMini: ImageButton
+    private lateinit var btnSiguienteMini: ImageButton
 
     private lateinit var cancionAdapter: CancionAdapter
 
@@ -156,8 +161,17 @@ class MainActivity : AppCompatActivity() {
         tvArtistaMini =
             findViewById(R.id.tvArtistaMini)
 
+        miniPlayerContainer =
+            findViewById(R.id.miniPlayerContainer)
+
         btnPlayMini =
             findViewById(R.id.btnPlayMini)
+
+        btnAnteriorMini =
+            findViewById(R.id.btnAnteriorMini)
+
+        btnSiguienteMini =
+            findViewById(R.id.btnSiguienteMini)
     }
 
 
@@ -184,6 +198,33 @@ class MainActivity : AppCompatActivity() {
 
     private fun configurarBotonMini() {
 
+        miniPlayerContainer.setOnClickListener {
+
+            val controller =
+                mediaController
+
+            if (
+                controller == null ||
+                controller.mediaItemCount == 0
+            ) {
+
+                Toast.makeText(
+                    this,
+                    R.string.player_not_ready,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            startActivity(
+                Intent(
+                    this,
+                    ActivityReproductor::class.java
+                )
+            )
+        }
+
         btnPlayMini.setOnClickListener {
 
             val controller =
@@ -209,6 +250,40 @@ class MainActivity : AppCompatActivity() {
             if (controller.isPlaying) {
                 controller.pause()
             } else {
+                controller.play()
+            }
+        }
+
+
+        btnAnteriorMini.setOnClickListener {
+
+            val controller =
+                mediaController
+                    ?: return@setOnClickListener
+
+
+            if (
+                controller.hasPreviousMediaItem()
+            ) {
+
+                controller.seekToPreviousMediaItem()
+                controller.play()
+            }
+        }
+
+
+        btnSiguienteMini.setOnClickListener {
+
+            val controller =
+                mediaController
+                    ?: return@setOnClickListener
+
+
+            if (
+                controller.hasNextMediaItem()
+            ) {
+
+                controller.seekToNextMediaItem()
                 controller.play()
             }
         }
