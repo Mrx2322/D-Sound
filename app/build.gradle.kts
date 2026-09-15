@@ -42,4 +42,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
 
     implementation("androidx.recyclerview:recyclerview:1.4.0")
+
+    implementation("androidx.media3:media3-exoplayer:1.11.0")
+    implementation("androidx.media3:media3-session:1.11.0")
+    implementation("androidx.media3:media3-ui:1.11.0")
 }

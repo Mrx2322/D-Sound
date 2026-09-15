@@ -4,17 +4,32 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <!-- Android 13 o superior -->
+    <!-- Leer música en Android 13 o superior -->
 
     <uses-permission
         android:name="android.permission.READ_MEDIA_AUDIO" />
 
 
-    <!-- Android 12 o inferior -->
+    <!-- Leer música en Android 12 o inferior -->
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
+
+
+    <!-- Reproducción musical en segundo plano -->
+
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+
+    <!-- Notificación multimedia en Android 13 o superior -->
+
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS" />
 
 
     <application
@@ -29,6 +44,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DSound">
 
+
+        <!-- Servicio de reproducción -->
+
+        <service
+            android:name=".player.ReproductorService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+
+
+            <intent-filter>
+
+                <action
+                    android:name="androidx.media3.session.MediaSessionService" />
+
+            </intent-filter>
+
+        </service>
+
+
+        <!-- Pantalla principal -->
 
         <activity
             android:name=".MainActivity"

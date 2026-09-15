@@ -1,10 +1,12 @@
 package com.deiapp.dsound
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -13,11 +15,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.deiapp.dsound.adapter.CancionAdapter
 import com.deiapp.dsound.data.MusicaLocalRepository
 import com.deiapp.dsound.model.Cancion
+import com.deiapp.dsound.player.ReproductorService
+import com.google.common.util.concurrent.ListenableFuture
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,8 +38,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var tvCancionMini: TextView
     private lateinit var tvArtistaMini: TextView
+    private lateinit var btnPlayMini: ImageButton
 
     private lateinit var cancionAdapter: CancionAdapter
+
+    private var cancionesDisponibles:
+            List<Cancion> = emptyList()
+
+    private var mediaController:
+            MediaController? = null
+
+    private var controllerFuture:
+            ListenableFuture<MediaController>? = null
 
 
     private val permisoAudioLauncher =
@@ -44,6 +65,40 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    private val playerListener =
+        object : Player.Listener {
+
+            override fun onIsPlayingChanged(
+                isPlaying: Boolean
+            ) {
+                actualizarBotonReproduccion(
+                    isPlaying
+                )
+            }
+
+
+            override fun onMediaItemTransition(
+                mediaItem: MediaItem?,
+                reason: Int
+            ) {
+                actualizarMiniReproductor(
+                    mediaItem
+                )
+            }
+
+
+            override fun onPlayerError(
+                error: PlaybackException
+            ) {
+                Toast.makeText(
+                    this@MainActivity,
+                    R.string.player_playback_error,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+
     override fun onCreate(
         savedInstanceState: Bundle?
     ) {
@@ -55,6 +110,8 @@ class MainActivity : AppCompatActivity() {
         configurarInsets()
         inicializarComponentes()
         configurarListaCanciones()
+        configurarBotonMini()
+        conectarReproductor()
         comprobarPermisoAudio()
     }
 
@@ -98,6 +155,9 @@ class MainActivity : AppCompatActivity() {
 
         tvArtistaMini =
             findViewById(R.id.tvArtistaMini)
+
+        btnPlayMini =
+            findViewById(R.id.btnPlayMini)
     }
 
 
@@ -106,7 +166,7 @@ class MainActivity : AppCompatActivity() {
         cancionAdapter =
             CancionAdapter { cancion ->
 
-                seleccionarCancion(
+                reproducirCancion(
                     cancion
                 )
             }
@@ -119,6 +179,97 @@ class MainActivity : AppCompatActivity() {
 
         rvCanciones.itemAnimator =
             null
+    }
+
+
+    private fun configurarBotonMini() {
+
+        btnPlayMini.setOnClickListener {
+
+            val controller =
+                mediaController
+
+            if (controller == null) {
+
+                Toast.makeText(
+                    this,
+                    R.string.player_not_ready,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+
+            if (controller.mediaItemCount == 0) {
+                return@setOnClickListener
+            }
+
+
+            if (controller.isPlaying) {
+                controller.pause()
+            } else {
+                controller.play()
+            }
+        }
+    }
+
+
+    private fun conectarReproductor() {
+
+        val sessionToken =
+            SessionToken(
+                this,
+                ComponentName(
+                    this,
+                    ReproductorService::class.java
+                )
+            )
+
+
+        controllerFuture =
+            MediaController.Builder(
+                this,
+                sessionToken
+            ).buildAsync()
+
+
+        controllerFuture?.addListener(
+            {
+
+                try {
+
+                    val controller =
+                        controllerFuture?.get()
+                            ?: return@addListener
+
+                    mediaController =
+                        controller
+
+                    controller.addListener(
+                        playerListener
+                    )
+
+                    actualizarBotonReproduccion(
+                        controller.isPlaying
+                    )
+
+                    actualizarMiniReproductor(
+                        controller.currentMediaItem
+                    )
+
+                } catch (error: Exception) {
+
+                    Toast.makeText(
+                        this,
+                        R.string.player_connection_error,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            },
+            ContextCompat.getMainExecutor(this)
+        )
     }
 
 
@@ -200,6 +351,9 @@ class MainActivity : AppCompatActivity() {
         canciones: List<Cancion>
     ) {
 
+        cancionesDisponibles =
+            canciones
+
         val cantidad =
             canciones.size
 
@@ -218,7 +372,6 @@ class MainActivity : AppCompatActivity() {
             rvCanciones.visibility =
                 View.VISIBLE
 
-            // En Inicio mostramos solamente las primeras 10.
             cancionAdapter.submitList(
                 canciones.take(10)
             )
@@ -243,17 +396,124 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun seleccionarCancion(
+    private fun reproducirCancion(
         cancion: Cancion
     ) {
 
+        val controller =
+            mediaController
+
+        if (controller == null) {
+
+            Toast.makeText(
+                this,
+                R.string.player_not_ready,
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+
+        val posicion =
+            cancionesDisponibles.indexOfFirst {
+                it.id == cancion.id
+            }
+
+        if (posicion == -1) {
+            return
+        }
+
+
+        val mediaItems =
+            cancionesDisponibles.map {
+                convertirAMediaItem(it)
+            }
+
+
+        controller.setMediaItems(
+            mediaItems,
+            posicion,
+            0L
+        )
+
+        controller.prepare()
+        controller.play()
+    }
+
+
+    private fun convertirAMediaItem(
+        cancion: Cancion
+    ): MediaItem {
+
+        val metadata =
+            MediaMetadata.Builder()
+                .setTitle(cancion.titulo)
+                .setArtist(cancion.artista)
+                .setAlbumTitle(cancion.album)
+                .build()
+
+
+        return MediaItem.Builder()
+            .setMediaId(
+                cancion.id.toString()
+            )
+            .setUri(
+                cancion.uri
+            )
+            .setMediaMetadata(
+                metadata
+            )
+            .build()
+    }
+
+
+    private fun actualizarMiniReproductor(
+        mediaItem: MediaItem?
+    ) {
+
+        if (mediaItem == null) {
+            return
+        }
+
+
         tvCancionMini.text =
-            cancion.titulo
+            mediaItem.mediaMetadata.title
+                ?: getString(
+                    R.string.unknown_title
+                )
+
 
         tvArtistaMini.text =
-            cancion.artista
+            mediaItem.mediaMetadata.artist
+                ?: getString(
+                    R.string.unknown_artist
+                )
+    }
 
-        // La reproducción se conectará después con Media3.
+
+    private fun actualizarBotonReproduccion(
+        reproduciendo: Boolean
+    ) {
+
+        if (reproduciendo) {
+
+            btnPlayMini.setImageResource(
+                android.R.drawable.ic_media_pause
+            )
+
+            btnPlayMini.contentDescription =
+                getString(R.string.pause)
+
+        } else {
+
+            btnPlayMini.setImageResource(
+                android.R.drawable.ic_media_play
+            )
+
+            btnPlayMini.contentDescription =
+                getString(R.string.play)
+        }
     }
 
 
@@ -296,5 +556,28 @@ class MainActivity : AppCompatActivity() {
             R.string.music_load_error,
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+
+    override fun onDestroy() {
+
+        mediaController?.removeListener(
+            playerListener
+        )
+
+        controllerFuture?.let { future ->
+
+            MediaController.releaseFuture(
+                future
+            )
+        }
+
+        mediaController =
+            null
+
+        controllerFuture =
+            null
+
+        super.onDestroy()
     }
 }

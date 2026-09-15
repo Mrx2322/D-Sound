@@ -127,10 +127,34 @@
         %d canción en tu teléfono
     </item>
 
-        <item quantity="other">
+    <item quantity="other">
         %d canciones en tu teléfono
     </item>
 
     </plurals>
+
+    <!-- Reproductor -->
+
+    <string name="player_connection_error">
+    No se pudo conectar con el reproductor.
+    </string>
+
+    <string name="player_playback_error">
+    No se pudo reproducir esta canción.
+    </string>
+
+    <string name="player_not_ready">
+    El reproductor todavía se está preparando.
+    </string>
+
+    <!-- Controles de reproducción -->
+
+    <string name="previous_song">
+    Canción anterior
+    </string>
+
+    <string name="next_song">
+    Canción siguiente
+    </string>
 
 </resources>
