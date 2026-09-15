@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Colores originales -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- D-Sound: Aurora Glass -->
+    <color name="ds_background">#100B1B</color>
+    <color name="ds_violet">#7248F5</color>
+    <color name="ds_magenta">#D94EAC</color>
+    <color name="ds_blue">#3D72F6</color>
+    <color name="ds_text_primary">#FFF9FF</color>
+    <color name="ds_text_secondary">#CFC4DA</color>
+
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+
+    <style
+        name="Base.Theme.DSound"
+        parent="Theme.Material3.DayNight.NoActionBar" />
+
+</resources>

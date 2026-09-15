@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!-- Aplicación -->
+
+    <string name="app_name">D-Sound</string>
+
+    <string name="app_slogan">
+        Tu música, sin interrupciones
+    </string>
+
+
+    <!-- Pantalla principal -->
+
+    <string name="home_greeting">
+        Hola, Deivis
+    </string>
+
+    <string name="home_subtitle">
+        Tu música, a tu manera
+    </string>
+
+    <string name="search_music_hint">
+        Buscar canción, artista o álbum
+    </string>
+
+    <string name="library_title">
+        Tu biblioteca
+    </string>
+
+    <string name="music_scanning">
+        Buscando música…
+    </string>
+
+    <string name="recently_played_title">
+        Escuchadas recientemente
+    </string>
+
+    <string name="view_all">
+        Ver todo
+    </string>
+
+    <string name="empty_music_title">
+        Aquí aparecerán tus canciones
+    </string>
+
+    <string name="empty_music_description">
+        D-Sound encontrará automáticamente la música guardada en tu teléfono.
+    </string>
+
+
+    <!-- Navegación inferior -->
+
+    <string name="nav_home">
+        Inicio
+    </string>
+
+    <string name="nav_library">
+        Biblioteca
+    </string>
+
+    <string name="nav_playlists">
+        Listas
+    </string>
+
+    <string name="nav_settings">
+        Ajustes
+    </string>
+
+    <!-- Minirreproductor -->
+
+    <string name="nothing_playing">
+    Nada reproduciéndose
+    </string>
+
+    <string name="select_song">
+    Selecciona una canción
+    </string>
+
+    <string name="play">
+    Reproducir
+    </string>
+
+    <string name="pause">
+    Pausar
+    </string>
+
+    <!-- Información de canciones -->
+
+    <string name="unknown_title">
+    Canción sin título
+    </string>
+
+    <string name="unknown_artist">
+    Artista desconocido
+    </string>
+
+    <string name="unknown_album">
+    Álbum desconocido
+    </string>
+
+    <!-- Permisos y carga de música -->
+
+    <string name="audio_permission_denied">
+    D-Sound necesita permiso para encontrar la música de tu teléfono.
+    </string>
+
+    <string name="audio_permission_permanently_denied">
+    Activa el permiso de música desde los ajustes de D-Sound.
+    </string>
+
+    <string name="music_load_error">
+    No se pudo leer la música del dispositivo.
+    </string>
+
+    <string name="no_music_found">
+    No se encontraron canciones en el teléfono.
+    </string>
+
+
+    <!-- Cantidad de canciones -->
+
+    <plurals name="song_count">
+
+    <item quantity="one">
+        %d canción en tu teléfono
+    </item>
+
+        <item quantity="other">
+        %d canciones en tu teléfono
+    </item>
+
+    </plurals>
+
+</resources>
